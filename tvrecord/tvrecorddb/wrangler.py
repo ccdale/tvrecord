@@ -25,7 +25,14 @@ import ccalogging
 from sqlalchemy.orm import Session
 
 from tvrecord.tvrecorddb import searchZap, chooseName, chooseGetData
-from tvrecord.tvrecorddb.models import Channel, Schedulemd5, Schedule, Person, Personmap, Program
+from tvrecord.tvrecorddb.models import (
+    Channel,
+    Schedulemd5,
+    Schedule,
+    Person,
+    Personmap,
+    Program,
+)
 
 log = ccalogging.log
 
@@ -521,16 +528,16 @@ def chanProgs(eng, chanid, now=int(time.time()), limit=40):
                     .limit(limit)
                 )
             else:
-            scheds = (
-                session.query(Schedule)
-                .filter(
-                    Schedule.stationid == chanid,
-                    Schedule.airdate < (now + 86400),
-                    (Schedule.airdate + Schedule.duration) > now,
+                scheds = (
+                    session.query(Schedule)
+                    .filter(
+                        Schedule.stationid == chanid,
+                        Schedule.airdate < (now + 86400),
+                        (Schedule.airdate + Schedule.duration) > now,
+                    )
+                    .order_by(Schedule.airdate)
+                    .all()
                 )
-                .order_by(Schedule.airdate)
-                .all()
-            )
             for x in scheds:
                 dsched = x._todict_()
                 _, dsched["dprog"] = progDetailsFromSchedule(session, x, withchan=False)

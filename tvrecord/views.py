@@ -18,13 +18,15 @@
 """views module for tvrecord."""
 import sys
 
-from tvrecord import app
+from tvrecord import app, cf, eng
+from tvrecord.tvrecorddb.wrangler import whatsOnNow
 
 
 @app.route("/")
 def index():
     try:
-        op = "Hello world"
+        # op = "Hello world"
+        op = whatsOnNow(eng)
         return op
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
