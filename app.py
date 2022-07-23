@@ -26,11 +26,10 @@ from ccaerrors import errorNotify, errorExit
 os.environ["FLASK_ENV"] = "development"
 import tvrecord
 
+# print(f"config: {tvrecord.cf=}")
 
-# cf, eng = tvrecord.begin(debug=True)
-
-# app = Flask(tvrecord.appname)
-
-print(f"config: {tvrecord.cf=}")
-
+# setup is now all in the package module __init__.py
+# the necessary connections to the config and the db
+# are now tvrecord.cf and tvrecord.eng
+# run the flask server
 tvrecord.app.run(host="0.0.0.0")
