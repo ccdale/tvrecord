@@ -19,7 +19,9 @@
 import sys
 
 from tvrecord import app, cf, eng
-from tvrecord.tvrecorddb.wrangler import whatsOnNow
+from tvrecord.html import whatsOneNowTable
+
+# from tvrecord.tvrecorddb.wrangler import whatsOnNow
 
 
 @app.route("/")
@@ -27,6 +29,7 @@ def index():
     try:
         # op = "Hello world"
         op = whatsOnNow(eng)
+        op = op[0]
         return op
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
