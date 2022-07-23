@@ -49,4 +49,5 @@ cf, eng = begin(debug=debug)
 ## circular import warning, don't do anything
 # with these views here, just import the file
 # as views.py DEPENDS on this __init__.py
+# because it uses tvrecord.app!
 import tvrecord.views
