@@ -16,6 +16,15 @@
 #     You should have received a copy of the GNU General Public License
 #     along with tvrecord.  If not, see <http://www.gnu.org/licenses/>.
 """views module for tvrecord."""
-import os
+import sys
 
 from tvrecord import app
+
+
+@app.route("/")
+def index():
+    try:
+        op = "Hello world"
+        return op
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
