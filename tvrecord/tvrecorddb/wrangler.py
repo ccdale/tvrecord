@@ -24,8 +24,8 @@ from ccaerrors import errorNotify, errorExit
 import ccalogging
 from sqlalchemy.orm import Session
 
-from tvrecorddb import searchZap, chooseName, chooseGetData
-from tvrecorddb.models import Channel, Schedulemd5, Schedule, Person, Personmap, Program
+from tvrecord.tvrecorddb import searchZap, chooseName, chooseGetData
+from tvrecord.tvrecorddb.models import Channel, Schedulemd5, Schedule, Person, Personmap, Program
 
 log = ccalogging.log
 

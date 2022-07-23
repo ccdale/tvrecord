@@ -23,7 +23,7 @@ from ccaerrors import errorNotify, errorExit
 from sqlalchemy import create_engine
 
 from tvrecord.config import Configuration
-from tvrecord.models import Base
+from tvrecord.tvrecorddb.models import Base
 
 
 def makeDBCreds(cf):

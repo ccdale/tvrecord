@@ -21,6 +21,7 @@ import sys
 from ccaerrors import errorNotify, errorExit
 from tvrecord.config import Configuration
 from tvrecord.tvrecorddb.db import makeDBEngine
+from tvrecord.tvrecorddb.models import Base
 
 __version__ = "0.1.0"
 
