@@ -46,4 +46,7 @@ app = Flask(__name__)
 debug = True if os.environ.get("FLASK_ENV", "development") == "development" else False
 cf, eng = begin(debug=debug)
 
+## circular import warning, don't do anything
+# with these views here, just import the file
+# as views.py DEPENDS on this __init__.py
 import tvrecord.views
