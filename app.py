@@ -15,35 +15,22 @@
 #
 #     You should have received a copy of the GNU General Public License
 #     along with tvrecord.  If not, see <http://www.gnu.org/licenses/>.
-"""package module for tvrecord."""
+"""app module for tvrecord."""
 import os
 import sys
 
 from ccaerrors import errorNotify, errorExit
-from flask import Flask
 
-from tvrecord.config import Configuration
-from tvrecord.tvrecorddb.db import makeDBEngine
-from tvrecord.tvrecorddb.models import Base
-
-
-def begin(debug=False):
-    """Starts a connection to the db and returns the db engine and the app config."""
-    try:
-        cf = Configuration(appname=appname)
-        eng = makeDBEngine(cf, echo=debug)
-        return (cf, eng)
-    except Exception as e:
-        errorExit(sys.exc_info()[2], e)
+# set to development for debugging
+# before importing tvrecord
+os.environ["FLASK_ENV"] = "development"
+import tvrecord
 
 
-__version__ = "0.1.0"
+# cf, eng = tvrecord.begin(debug=True)
 
-appname = "tvrecord"
+# app = Flask(tvrecord.appname)
 
-app = Flask(__name__)
+print(f"config: {tvrecord.cf=}")
 
-debug = True if os.environ.get("FLASK_ENV", "development") == "development" else False
-cf, eng = begin(debug=debug)
-
-import tvrecord.views
+tvrecord.app.run(host="0.0.0.0")
