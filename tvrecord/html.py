@@ -18,8 +18,10 @@
 """html module for tvrecord."""
 import sys
 
+from ccaerrors import errorNotify
+
 from tvrecord.strings import durationString, timeString
-from tvrecord.tvrecorddb.wrangler import whatsOnNow
+from tvrecord.tvrecorddb.wrangler import favourites, chanProgs, whatsOnNow
 
 
 def mkAttrs(attrs):
@@ -47,7 +49,7 @@ def mkTag(tag, data, attrs=[], newline=True, inlineclose=False):
         if inlineclose:
             op = f"<{tag}{space}{sattrs} />{nl}"
         else:
-            op = f"<{tag}{space}{sattrs}>{data}</{tag}{nl}"
+            op = f"<{tag}{space}{sattrs}>{data}</{tag}>{nl}"
         return op
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
@@ -102,6 +104,14 @@ def mkTable(rows, headings=[], attrs=[], newline=True):
         errorNotify(sys.exc_info()[2], e)
 
 
+def mkLink(text, dest, attrs=[]):
+    try:
+        attrs.append({"href": dest})
+        return mkTag("a", text, attrs, newline=False)
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
 def whatsOnNowTable(eng):
     try:
         headings = ["Channel", "Start", "Duration", "Title", "Description"]
@@ -119,8 +129,64 @@ def whatsOnNowTable(eng):
             line.append(d)
             d = {"cell": won["dprog"]["shortdesc"], "attrs": []}
             line.append(d)
-            cells.append(line)
+            d = {"cells": line, "attrs": []}
+            cells.append(d)
         table = mkTable(cells, headings)
         return table
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def channelProgsTable(eng, chanid):
+    try:
+        favs = favourites(eng, favs=False)
+        fchan = None
+        for fav in favs:
+            if fav["stationid"] == chanid:
+                fchan = fav
+                break
+        headings = ["Start", "Duration", "Title", "Description"]
+        wons = chanProgs(eng, chanid, limit=0)
+        cells = []
+        for won in wons:
+            line = []
+            d = {"cell": timeString(won["airdate"]), "attrs": []}
+            line.append(d)
+            d = {"cell": durationString(won["duration"]), "attrs": []}
+            line.append(d)
+            d = {"cell": won["dprog"]["title"], "attrs": []}
+            line.append(d)
+            desc = (
+                won["dprog"]["shortdesc"]
+                if won["dprog"]["shortdesc"]
+                else won["dprog"]["longdesc"]
+            )
+            d = {"cell": desc, "attrs": []}
+            line.append(d)
+            d = {"cells": line, "attrs": []}
+            cells.append(d)
+        table = mkTable(cells, headings)
+        if fchan is not None:
+            op = mkTag("p", fchan["name"])
+        return op + table
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def channelList(eng, favs=True):
+    try:
+        xfavs = favourites(eng, favs=favs)
+        links = [
+            mkLink(x["name"], f'channel/{x["stationid"]}', attrs=[]) for x in xfavs
+        ]
+        op = "<br />\n".join(links)
+        return op
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def mkCellDict(data, hclass):
+    try:
+        return {"data": data, "class": hclass}
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

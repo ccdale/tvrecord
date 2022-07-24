@@ -16,8 +16,10 @@
 #     You should have received a copy of the GNU General Public License
 #     along with tvrecord.  If not, see <http://www.gnu.org/licenses/>.
 #
-from datetime import datetime
+from datetime import datetime, timezone
 import sys
+
+# import time
 
 from ccaerrors import errorNotify
 
@@ -42,8 +44,11 @@ def cleanString(istring):
 
 def timeString(ts):
     try:
+        # tm = time.localtime(ts)
+        # xstr = f"{tm.tm_hour:>2}:{tm.tm_min:0>2}"
         dt = datetime.fromtimestamp(ts)
-        xstr = f"{dt.hour:>2}:{dt.minute:0>2}"
+        xdt = dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
+        xstr = f"{xdt.hour:>2}:{xdt.minute:0>2}"
         return xstr
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

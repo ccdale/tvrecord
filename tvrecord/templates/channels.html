@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Channels{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<ul>
+{% for c in chans %}
+    <li><a href='channel/{{ c["stationid"] }}'>{{ c["name"] }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

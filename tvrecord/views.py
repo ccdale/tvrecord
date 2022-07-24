@@ -18,8 +18,13 @@
 """views module for tvrecord."""
 import sys
 
+from ccaerrors import errorNotify
+from flask import render_template
+
 from tvrecord import app, cf, eng
-from tvrecord.html import whatsOneNowTable
+from tvrecord.html import whatsOnNowTable, channelProgsTable, mkCellDict
+from tvrecord.strings import durationString, timeString
+from tvrecord.tvrecorddb.wrangler import favourites, whatsOnNow
 
 # from tvrecord.tvrecorddb.wrangler import whatsOnNow
 
@@ -28,8 +33,41 @@ from tvrecord.html import whatsOneNowTable
 def index():
     try:
         # op = "Hello world"
-        op = whatsOnNow(eng)
-        op = op[0]
+        # op = whatsOnNowTable(eng)
+        headings = ["Channel", "Start", "Duration", "Title", "Description"]
+        lines = []
+        wons = whatsOnNow(eng)
+        for won in wons:
+            line = [mkCellDict(won["dchan"]["name"], "cname")]
+            line.append(mkCellDict(timeString(won["airdate"]), "time"))
+            line.append(mkCellDict(durationString(won["duration"]), "time"))
+            line.append(mkCellDict(won["dprog"]["title"], "title"))
+            desc = (
+                won["dprog"]["shortdesc"]
+                if won["dprog"]["shortdesc"]
+                else won["dprog"]["longdesc"]
+            )
+            line.append(mkCellDict(desc, "description"))
+            lines.append(line)
+            print(lines)
+        return render_template("index.html", headings=headings, lines=lines)
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+@app.route("/channel/<chanid>")
+def channel(chanid):
+    try:
+        op = channelProgsTable(eng, chanid)
         return op
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+@app.route("/channels")
+def channels():
+    try:
+        chans = favourites(eng)
+        return render_template("channels.html", chans=chans)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
