@@ -22,9 +22,9 @@ from ccaerrors import errorNotify
 from flask import render_template
 
 from tvrecord import app, cf, eng
-from tvrecord.html import whatsOnNowTable, channelProgsTable, mkCellDict
+from tvrecord.html import mkCellDict
 from tvrecord.strings import durationString, timeString
-from tvrecord.tvrecorddb.wrangler import favourites, whatsOnNow
+from tvrecord.tvrecorddb.wrangler import chanProgs, favourites, whatsOnNow
 
 # from tvrecord.tvrecorddb.wrangler import whatsOnNow
 
@@ -58,8 +58,25 @@ def index():
 @app.route("/channel/<chanid>")
 def channel(chanid):
     try:
-        op = channelProgsTable(eng, chanid)
-        return op
+        # op = channelProgsTable(eng, chanid)
+        headings = ["Start", "Duration", "Title", "Description"]
+        cprgs = chanProgs(eng, chanid, limit=0)
+        cname = cprgs[0]["dchan"]["name"]
+        lines = []
+        for prg in cprgs:
+            line = [mkCellDict(timeString(prg["airdate"]), "time")]
+            line.append(mkCellDict(durationString(prg["duration"]), "time"))
+            line.append(mkCellDict(prg["dprog"]["title"], "title"))
+            desc = (
+                prg["dprog"]["shortdesc"]
+                if prg["dprog"]["shortdesc"]
+                else prg["dprog"]["longdesc"]
+            )
+            line.append(mkCellDict(desc, "description"))
+            lines.append(line)
+        return render_template(
+            "channel.html", headings=headings, lines=lines, cname=cname
+        )
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 

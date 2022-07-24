@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}{{ cname }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+        {% for heading in headings %}
+            <th>{{ heading }}</th>
+        {% endfor %}
+    </tr>
+    {% for line in lines %}
+        <tr>
+            {% for cell in line %}
+                <td class="{{ cell['class'] }}">{{ cell["data"] }}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+
