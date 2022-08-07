@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}{{ dprog["title"] }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<p>{{ dsched }}</p>
+<p>{{ dchan }}</p>
+<p>{{ dprog }}</p>
+<p>{{ peeps }}</p>
+{% endblock %}

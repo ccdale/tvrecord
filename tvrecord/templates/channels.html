@@ -5,9 +5,15 @@
 {% endblock %}
 
 {% block content %}
+{% if fav == "1" %}
+    <p><a href="/channels/0">All Channels</a></p>
+{% else %}
+    <p><a href="/channels/1">Favourite Channels</a></p>
+{% endif %}
+
 <ul>
 {% for c in chans %}
-    <li><a href='channel/{{ c["stationid"] }}'>{{ c["name"] }}</a></li>
+    <li><a href='/channel/{{ c["stationid"] }}'>{{ c["name"] }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}

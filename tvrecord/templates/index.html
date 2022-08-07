@@ -14,7 +14,15 @@
     {% for line in lines %}
         <tr>
             {% for cell in line %}
-                <td class="{{ cell['class'] }}">{{ cell["data"] }}</td>
+                {% if "link" in cell %}
+                    <td class="{{ cell['class'] }}">
+                        <a class="{{ cell['class'] }}" href="{{ cell['link'] }}">
+                            {{ cell["data"] }}
+                        </a>
+                    </td>
+                {% else %}
+                    <td class="{{ cell['class'] }}">{{ cell["data"] }}</td>
+                {% endif %}
             {% endfor %}
         </tr>
     {% endfor %}

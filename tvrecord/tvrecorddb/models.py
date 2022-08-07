@@ -50,6 +50,7 @@ class Schedule(Base):
     airdate = Column(Integer(), primary_key=True)
     duration = Column(Integer())
     md5 = Column(String(32))
+    record = Column(Integer(), default=0, nullable=True)
 
     def __repr__(self):
         return f"<Schedule(programid={self.programid}, stationid={self.stationid}, airdate={self.airdate}>"

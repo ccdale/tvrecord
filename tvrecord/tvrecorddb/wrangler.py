@@ -459,12 +459,13 @@ def whatsOnNow(eng, now=int(time.time()), favs=True, limit=40):
         xscheds = []
         xfavs = favourites(eng, favs=favs)
         chanids = [x["stationid"] for x in xfavs]
+        timewidth = 3600
         with Session(eng) as session, session.begin():
             if limit > 0:
                 scheds = (
                     session.query(Schedule)
                     .filter(
-                        Schedule.airdate < (now + 3600),
+                        Schedule.airdate < (now + timewidth),
                         (Schedule.airdate + Schedule.duration) > now,
                         Schedule.stationid.in_(chanids),
                     )
@@ -475,7 +476,7 @@ def whatsOnNow(eng, now=int(time.time()), favs=True, limit=40):
                 scheds = (
                     session.query(Schedule)
                     .filter(
-                        Schedule.airdate < (now + 3600),
+                        Schedule.airdate < (now + timewidth),
                         (Schedule.airdate + Schedule.duration) > now,
                         Schedule.stationid.in_(chanids),
                     )
@@ -514,6 +515,7 @@ def progDetailsFromSchedule(session, schedule, withchan=True):
 def chanProgs(eng, chanid, now=int(time.time()), limit=40):
     try:
         xscheds = []
+        timewidth = 86400
         with Session(eng) as session, session.begin():
             dchan = chanDetails(session, chanid)
             if limit > 0:
@@ -521,18 +523,18 @@ def chanProgs(eng, chanid, now=int(time.time()), limit=40):
                     session.query(Schedule)
                     .filter(
                         Schedule.stationid == chanid,
-                        Schedule.airdate < (now + 86400),
+                        Schedule.airdate < (now + timewidth),
                         (Schedule.airdate + Schedule.duration) > now,
                     )
                     .order_by(Schedule.airdate)
-                    .limit(limit)
+                    # .limit(limit)
                 )
             else:
                 scheds = (
                     session.query(Schedule)
                     .filter(
                         Schedule.stationid == chanid,
-                        Schedule.airdate < (now + 86400),
+                        Schedule.airdate < (now + timewidth),
                         (Schedule.airdate + Schedule.duration) > now,
                     )
                     .order_by(Schedule.airdate)
@@ -544,5 +546,35 @@ def chanProgs(eng, chanid, now=int(time.time()), limit=40):
                 dsched["dchan"] = dchan
                 xscheds.append(dsched)
         return xscheds
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def scheduleFromMD5(eng, schedulemd5):
+    try:
+        with Session(eng) as session, session.begin():
+            sched = session.query(Schedule).filter_by(md5=schedulemd5).first()
+            dchan, dprog = progDetailsFromSchedule(session, sched)
+            dsched = sched._todict_()
+            peeps = personFromProgId(session, dprog["programid"])
+            return (dsched, dchan, dprog, peeps)
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def personFromProgId(session, progid):
+    try:
+        xdats = []
+        xdat = None
+        peeps = session.query(Personmap).filter_by(programid=progid).all()
+        for peep in peeps:
+            pdat = session.query(Person).filter_by(personid=peep["personid"]).first()
+            xdat = {
+                "name": pdat["name"],
+                "role": peep["role"],
+                "billingorder": peep["billingorder"],
+            }
+            xdats.append(xdat)
+        return xdats
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

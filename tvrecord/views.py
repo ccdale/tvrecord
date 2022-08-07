@@ -17,6 +17,7 @@
 #     along with tvrecord.  If not, see <http://www.gnu.org/licenses/>.
 """views module for tvrecord."""
 import sys
+from urllib.parse import quote_plus
 
 from ccaerrors import errorNotify
 from flask import render_template
@@ -24,7 +25,12 @@ from flask import render_template
 from tvrecord import app, cf, eng
 from tvrecord.html import mkCellDict
 from tvrecord.strings import durationString, timeString
-from tvrecord.tvrecorddb.wrangler import chanProgs, favourites, whatsOnNow
+from tvrecord.tvrecorddb.wrangler import (
+    chanProgs,
+    favourites,
+    whatsOnNow,
+    scheduleFromMD5,
+)
 
 # from tvrecord.tvrecorddb.wrangler import whatsOnNow
 
@@ -38,7 +44,8 @@ def index():
         lines = []
         wons = whatsOnNow(eng)
         for won in wons:
-            line = [mkCellDict(won["dchan"]["name"], "cname")]
+            chanlink = f"channel/{won['dchan']['stationid']}"
+            line = [mkCellDict(won["dchan"]["name"], "cname", chanlink)]
             line.append(mkCellDict(timeString(won["airdate"]), "time"))
             line.append(mkCellDict(durationString(won["duration"]), "time"))
             line.append(mkCellDict(won["dprog"]["title"], "title"))
@@ -49,7 +56,7 @@ def index():
             )
             line.append(mkCellDict(desc, "description"))
             lines.append(line)
-            print(lines)
+            # print(lines)
         return render_template("index.html", headings=headings, lines=lines)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
@@ -66,7 +73,8 @@ def channel(chanid):
         for prg in cprgs:
             line = [mkCellDict(timeString(prg["airdate"]), "time")]
             line.append(mkCellDict(durationString(prg["duration"]), "time"))
-            line.append(mkCellDict(prg["dprog"]["title"], "title"))
+            link = f"/program/{quote_plus(prg['md5'])}"
+            line.append(mkCellDict(prg["dprog"]["title"], "title", link=link))
             desc = (
                 prg["dprog"]["shortdesc"]
                 if prg["dprog"]["shortdesc"]
@@ -81,10 +89,22 @@ def channel(chanid):
         errorNotify(sys.exc_info()[2], e)
 
 
-@app.route("/channels")
-def channels():
+@app.route("/channels/<fav>")
+def channels(fav):
     try:
-        chans = favourites(eng)
-        return render_template("channels.html", chans=chans)
+        favs = True if fav == "1" else False
+        chans = favourites(eng, favs=favs)
+        return render_template("channels.html", chans=chans, fav=fav)
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+@app.route("/program/<schedulemd5>")
+def program(schedulemd5):
+    try:
+        dsched, dchan, dprog, peeps = scheduleFromMD5(eng, schedulemd5)
+        return render_template(
+            "program.html", dsched=dsched, dchan=dchan, dprog=dprog, peeps=peeps
+        )
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

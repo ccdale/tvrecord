@@ -185,8 +185,11 @@ def channelList(eng, favs=True):
         errorNotify(sys.exc_info()[2], e)
 
 
-def mkCellDict(data, hclass):
+def mkCellDict(data, hclass, link=None):
     try:
-        return {"data": data, "class": hclass}
+        xdict = {"data": data, "class": hclass}
+        if link:
+            xdict["link"] = link
+        return xdict
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

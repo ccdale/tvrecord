@@ -10,3 +10,11 @@ td.title {
 }
 td.description {
 }
+a {
+    color: blue;
+    background-color: white;
+}
+a:hover {
+    background-color: blue;
+    color: white;
+}
