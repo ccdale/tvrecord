@@ -20,6 +20,11 @@
                             {{ cell["data"] }}
                         </a>
                     </td>
+                {% elif cell['class'] == "recordtick" %}
+                    {% checked="" if cell["data"] == 0 else " checked" %}
+                    <td class="{{ cell['class'] }}">
+                        <input type="checkbox" value="{{ cell['link'] }}"{{ checked }}/>
+                    </td>
                 {% else %}
                     <td class="{{ cell['class'] }}">{{ cell["data"] }}</td>
                 {% endif %}

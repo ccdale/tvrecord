@@ -32,15 +32,11 @@ from tvrecord.tvrecorddb.wrangler import (
     scheduleFromMD5,
 )
 
-# from tvrecord.tvrecorddb.wrangler import whatsOnNow
-
 
 @app.route("/")
 def index():
     try:
-        # op = "Hello world"
-        # op = whatsOnNowTable(eng)
-        headings = ["Channel", "Start", "Duration", "Title", "Description"]
+        headings = ["Channel", "Start", "Duration", "Title", "Description", "Record"]
         lines = []
         wons = whatsOnNow(eng)
         for won in wons:
@@ -55,8 +51,8 @@ def index():
                 else won["dprog"]["longdesc"]
             )
             line.append(mkCellDict(desc, "description"))
+            line.append(mkCellDict(won["record"], "recordtick", won["md5"]))
             lines.append(line)
-            # print(lines)
         return render_template("index.html", headings=headings, lines=lines)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
