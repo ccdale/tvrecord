@@ -568,13 +568,24 @@ def personFromProgId(session, progid):
         xdat = None
         peeps = session.query(Personmap).filter_by(programid=progid).all()
         for peep in peeps:
-            pdat = session.query(Person).filter_by(personid=peep["personid"]).first()
+            pdat = session.query(Person).filter_by(personid=peep.personid).first()
             xdat = {
-                "name": pdat["name"],
-                "role": peep["role"],
-                "billingorder": peep["billingorder"],
+                "name": pdat.name,
+                "role": peep.role,
+                "billingorder": peep.billingorder,
             }
             xdats.append(xdat)
         return xdats
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def setScheduleRecord(eng, schedmd5):
+    try:
+        with Session(eng) as session, session.begin():
+            sched = session.query(Schedule).filter_by(md5=schedmd5).first()
+            sched.record = 1
+            # sched["record"] = 1
+            session.add(sched)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

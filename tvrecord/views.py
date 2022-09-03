@@ -20,7 +20,7 @@ import sys
 from urllib.parse import quote_plus
 
 from ccaerrors import errorNotify
-from flask import render_template
+from flask import flash, redirect, render_template, request, url_for
 
 from tvrecord import app, cf, eng
 from tvrecord.html import mkCellDict
@@ -30,6 +30,7 @@ from tvrecord.tvrecorddb.wrangler import (
     favourites,
     whatsOnNow,
     scheduleFromMD5,
+    setScheduleRecord,
 )
 
 
@@ -53,7 +54,27 @@ def index():
             line.append(mkCellDict(desc, "description"))
             line.append(mkCellDict(won["record"], "recordtick", won["md5"]))
             lines.append(line)
-        return render_template("index.html", headings=headings, lines=lines)
+        return render_template(
+            "index.html",
+            headings=headings,
+            lines=lines,
+            recordurl=url_for("recordProgram"),
+            lenheadings=len(headings),
+        )
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+@app.route("/recordprogram", methods=["POST"])
+def recordProgram():
+    try:
+        data = request.form
+        for key in data:
+            if key != "submit":
+                dsched, dchan, dprog, peeps = scheduleFromMD5(eng, key)
+                setScheduleRecord(eng, key)
+                flash(f"{dprog['title']} set to record")
+        return redirect(url_for("index"))
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 

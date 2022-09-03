@@ -42,6 +42,7 @@ __version__ = "0.1.0"
 appname = "tvrecord"
 
 app = Flask(__name__)
+app.secret_key = "a secret key"
 
 debug = True if os.environ.get("FLASK_ENV", "development") == "development" else False
 cf, eng = begin(debug=debug)

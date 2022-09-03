@@ -5,27 +5,39 @@
 {% endblock %}
 
 {% block content %}
-<table>
-    <tr>
-        {% for heading in headings %}
-            <th>{{ heading }}</th>
-        {% endfor %}
-    </tr>
-    {% for line in lines %}
+<form action="{{ recordurl }}" method="POST">
+    <table>
         <tr>
-            {% for cell in line %}
-                {% if "link" in cell %}
-                    <td class="{{ cell['class'] }}">
-                        <a class="{{ cell['class'] }}" href="{{ cell['link'] }}">
-                            {{ cell["data"] }}
-                        </a>
-                    </td>
-                {% else %}
-                    <td class="{{ cell['class'] }}">{{ cell["data"] }}</td>
-                {% endif %}
+            {% for heading in headings %}
+                <th>{{ heading }}</th>
             {% endfor %}
         </tr>
-    {% endfor %}
-</table>
+        {% for line in lines %}
+            <tr>
+                {% for cell in line %}
+                    {% if cell['class'] == "recordtick" %}
+                        {% set checked="" if cell["data"] == 0 else " checked" %}
+                        <td class="{{ cell['class'] }}">
+                            <input type="checkbox" id={{ cell['link'] }} name="{{ cell['link'] }}"{{ checked }}>
+                        </td>
+                    {% elif "link" in cell %}
+                        <td class="{{ cell['class'] }}">
+                            <a class="{{ cell['class'] }}" href="{{ cell['link'] }}">
+                                {{ cell["data"] }}
+                            </a>
+                        </td>
+                    {% else %}
+                        <td class="{{ cell['class'] }}">{{ cell["data"] }}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan={{ lenheadings }} align="right">
+                <input type="submit" name="submit" value="Record">
+            </td>
+        </tr>
+    </table>
+</form>
 {% endblock %}
 
