@@ -622,7 +622,6 @@ def getScheduleRecord(eng):
             scheds = (
                 session.query(Schedule)
                 .filter(
-                    Schedule.md5 == schedmd5,
                     (Schedule.airdate + Schedule.duration) > now,
                 )
                 .order_by(airdate)
