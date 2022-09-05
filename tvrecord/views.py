@@ -85,7 +85,7 @@ def recordProgram():
 def recordChannelProgram():
     try:
         data = request.form
-        print(f"form data: {data}")
+        # print(f"form data: {data}")
         for key in data:
             if key not in ["submit", "chanid"]:
                 pinfo = scheduleFromMD5(eng, key)
