@@ -554,23 +554,20 @@ def chanProgs(eng, chanid, now=int(time.time()), limit=40):
 def scheduleFromMD5(eng, schedulemd5):
     try:
         with Session(eng) as session, session.begin():
-            dsched, dchan, dprog, peeps = programFromScheduleMD5(session, schedulemd5)
-            # sched = session.query(Schedule).filter_by(md5=schedulemd5).first()
-            # dchan, dprog = progDetailsFromSchedule(session, sched)
-            # dsched = sched._todict_()
-            # peeps = personFromProgId(session, dprog["programid"])
-            return (dsched, dchan, dprog, peeps)
+            pid = programFromScheduleMD5(session, schedulemd5)
+            return pid
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
 
 def programFromScheduleMD5(session, smd5):
     try:
-        sched = session.query(Schedule).filter_by(md5=schedulemd5).first()
+        sched = session.query(Schedule).filter_by(md5=smd5).first()
         dchan, dprog = progDetailsFromSchedule(session, sched)
         dsched = sched._todict_()
         peeps = personFromProgId(session, dprog["programid"])
-        return (dsched, dchan, dprog, peeps)
+        pid = programInfoDict(dsched=dsched, dchan=dchan, dprog=dprog, peeps=peeps)
+        return pid
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -631,7 +628,9 @@ def getScheduleRecord(eng):
                 .all()
             )
             for sched in scheds:
-                dsched, dchan, dprog, peeps = programFromScheduleMD5(session, sched.md5)
+                pid = programFromScheduleMD5(session, sched.md5)
+                recs.append(pid)
+        return recs
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -639,10 +638,10 @@ def getScheduleRecord(eng):
 def programInfoDict(dsched=None, dchan=None, dprog=None, peeps=None):
     try:
         xd = {
-            "dsched": dsched,
-            "dchan": dchan,
-            "dprog": dprog,
-            "peeps": peeps,
+            "schedule": dsched,
+            "channel": dchan,
+            "program": dprog,
+            "people": peeps,
         }
         return xd
     except Exception as e:
