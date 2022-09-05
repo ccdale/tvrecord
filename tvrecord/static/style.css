@@ -18,6 +18,11 @@ a:hover {
     background-color: blue;
     color: white;
 }
+div.flash.error {
+    background-color: red;
+    color: white;
+    padding: 10px 10px 10px 10px;
+}
 div.flash {
     background-color: #71f807;
     color: black;

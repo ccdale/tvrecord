@@ -54,13 +54,13 @@ def index():
             line.append(mkCellDict(desc, "description"))
             line.append(mkCellDict(won["record"], "recordtick", won["md5"]))
             lines.append(line)
-        return render_template(
-            "index.html",
-            headings=headings,
-            lines=lines,
-            recordurl=url_for("recordProgram"),
-            lenheadings=len(headings),
-        )
+        kwargs = {
+            "headings": headings,
+            "lines": lines,
+            "recordurl": url_for("recordProgram"),
+            "lenheadings": len(headings),
+        }
+        return render_template("index.html", **kwargs)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -71,10 +71,34 @@ def recordProgram():
         data = request.form
         for key in data:
             if key != "submit":
-                dsched, dchan, dprog, peeps = scheduleFromMD5(eng, key)
+                pinfo = scheduleFromMD5(eng, key)
                 setScheduleRecord(eng, key)
-                flash(f"{dprog['title']} set to record")
+                flash(
+                    f"{pinfo['program']['title']} set to record on {pinfo['channel']['name']}"
+                )
         return redirect(url_for("index"))
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+@app.route("/recordchannelprogram", methods=["POST"])
+def recordChannelProgram():
+    try:
+        data = request.form
+        print(f"form data: {data}")
+        for key in data:
+            if key not in ["submit", "chanid"]:
+                pinfo = scheduleFromMD5(eng, key)
+                if setScheduleRecord(eng, key):
+                    flash(
+                        f"{pinfo['program']['title']} set to record on {pinfo['channel']['name']}"
+                    )
+                else:
+                    flash(
+                        f"Failed to set {pinfo['program']['title']} to record on {pinfo['channel']['name']}",
+                        "error",
+                    )
+        return redirect(url_for("channel", chanid=data["chanid"]))
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -82,6 +106,7 @@ def recordProgram():
 @app.route("/channel/<chanid>")
 def channel(chanid):
     try:
+        print(f"in channel: chanid is {chanid}")
         # op = channelProgsTable(eng, chanid)
         headings = ["Start", "Duration", "Title", "Description"]
         cprgs = chanProgs(eng, chanid, limit=0)
@@ -98,10 +123,18 @@ def channel(chanid):
                 else prg["dprog"]["longdesc"]
             )
             line.append(mkCellDict(desc, "description"))
+            ## todo
+            line.append(mkCellDict(prg["record"], "recordtick", prg["md5"]))
+            ##
             lines.append(line)
-        return render_template(
-            "channel.html", headings=headings, lines=lines, cname=cname
-        )
+        kwargs = {
+            "headings": headings,
+            "lines": lines,
+            "cname": cname,
+            "recordurl": url_for("recordChannelProgram"),
+            "chanid": chanid,
+        }
+        return render_template("channel.html", **kwargs)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -119,9 +152,7 @@ def channels(fav):
 @app.route("/program/<schedulemd5>")
 def program(schedulemd5):
     try:
-        dsched, dchan, dprog, peeps = scheduleFromMD5(eng, schedulemd5)
-        return render_template(
-            "program.html", dsched=dsched, dchan=dchan, dprog=dprog, peeps=peeps
-        )
+        pinfo = scheduleFromMD5(eng, schedulemd5)
+        return render_template("program.html", **pinfo)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

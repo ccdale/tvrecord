@@ -6,6 +6,7 @@
 
 {% block content %}
 <form action="{{ recordurl }}" method="POST">
+    <input type=hidden name="chanid" value="{{ chanid }}">
     <table>
         <tr>
             {% for heading in headings %}

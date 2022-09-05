@@ -23,7 +23,10 @@ from ccaerrors import errorNotify, errorExit
 
 # set to development for debugging
 # before importing tvrecord
+
 os.environ["FLASK_ENV"] = "development"
+# os.environ["FLASK_ENV"] = "nosqldebug"
+
 import tvrecord
 
 # print(f"config: {tvrecord.cf=}")

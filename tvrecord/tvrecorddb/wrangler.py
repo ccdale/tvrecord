@@ -542,6 +542,7 @@ def chanProgs(eng, chanid, now=int(time.time()), limit=40):
                 )
             for x in scheds:
                 dsched = x._todict_()
+                # print(f"schedules: current: {x=}: {dsched=}")
                 _, dsched["dprog"] = progDetailsFromSchedule(session, x, withchan=False)
                 dsched["dchan"] = dchan
                 xscheds.append(dsched)
@@ -553,11 +554,23 @@ def chanProgs(eng, chanid, now=int(time.time()), limit=40):
 def scheduleFromMD5(eng, schedulemd5):
     try:
         with Session(eng) as session, session.begin():
-            sched = session.query(Schedule).filter_by(md5=schedulemd5).first()
-            dchan, dprog = progDetailsFromSchedule(session, sched)
-            dsched = sched._todict_()
-            peeps = personFromProgId(session, dprog["programid"])
+            dsched, dchan, dprog, peeps = programFromScheduleMD5(session, schedulemd5)
+            # sched = session.query(Schedule).filter_by(md5=schedulemd5).first()
+            # dchan, dprog = progDetailsFromSchedule(session, sched)
+            # dsched = sched._todict_()
+            # peeps = personFromProgId(session, dprog["programid"])
             return (dsched, dchan, dprog, peeps)
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def programFromScheduleMD5(session, smd5):
+    try:
+        sched = session.query(Schedule).filter_by(md5=schedulemd5).first()
+        dchan, dprog = progDetailsFromSchedule(session, sched)
+        dsched = sched._todict_()
+        peeps = personFromProgId(session, dprog["programid"])
+        return (dsched, dchan, dprog, peeps)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -582,10 +595,55 @@ def personFromProgId(session, progid):
 
 def setScheduleRecord(eng, schedmd5):
     try:
+        now = int(time.time())
         with Session(eng) as session, session.begin():
-            sched = session.query(Schedule).filter_by(md5=schedmd5).first()
-            sched.record = 1
-            # sched["record"] = 1
-            session.add(sched)
+            # sched = session.query(Schedule).filter_by(md5=schedmd5, airdate >= now).first()
+            sched = (
+                session.query(Schedule)
+                .filter(
+                    Schedule.md5 == schedmd5,
+                    (Schedule.airdate + Schedule.duration) > now,
+                )
+                .first()
+            )
+            # print(f"{sched=}")
+            if sched is not None:
+                sched.record = 1
+                # sched["record"] = 1
+                session.add(sched)
+                return True
+        return False
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def getScheduleRecord(eng):
+    try:
+        now = int(time.time())
+        recs = []
+        with Session(eng) as session, session.begin():
+            scheds = (
+                session.query(Schedule)
+                .filter(
+                    Schedule.md5 == schedmd5,
+                    (Schedule.airdate + Schedule.duration) > now,
+                )
+                .all()
+            )
+            for sched in scheds:
+                dsched, dchan, dprog, peeps = programFromScheduleMD5(session, sched.md5)
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def programInfoDict(dsched=None, dchan=None, dprog=None, peeps=None):
+    try:
+        xd = {
+            "dsched": dsched,
+            "dchan": dchan,
+            "dprog": dprog,
+            "peeps": peeps,
+        }
+        return xd
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
