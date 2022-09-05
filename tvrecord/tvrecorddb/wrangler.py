@@ -624,7 +624,7 @@ def getScheduleRecord(eng):
                 .filter(
                     (Schedule.airdate + Schedule.duration) > now,
                 )
-                .order_by(airdate)
+                .order_by(Schedule.airdate)
                 .all()
             )
             for sched in scheds:
