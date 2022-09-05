@@ -644,7 +644,7 @@ def programInfoDict(dsched=None, dchan=None, dprog=None, peeps=None):
             "channel": dchan,
             "program": dprog,
             "people": peeps,
-            "starttime": dateTimeString(dsched.airdate),
+            "starttime": dateTimeString(dsched["airdate"]),
         }
         return xd
     except Exception as e:
