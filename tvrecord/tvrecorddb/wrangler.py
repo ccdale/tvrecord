@@ -24,6 +24,7 @@ from ccaerrors import errorNotify, errorExit
 import ccalogging
 from sqlalchemy.orm import Session
 
+from tvrecord.strings import dateTimeString
 from tvrecord.tvrecorddb import searchZap, chooseName, chooseGetData
 from tvrecord.tvrecorddb.models import (
     Channel,
@@ -643,6 +644,7 @@ def programInfoDict(dsched=None, dchan=None, dprog=None, peeps=None):
             "channel": dchan,
             "program": dprog,
             "people": peeps,
+            "starttime": dateTimeString(dsched.airdate),
         }
         return xd
     except Exception as e:

@@ -18,8 +18,7 @@
 #
 from datetime import datetime, timezone
 import sys
-
-# import time
+import time
 
 from ccaerrors import errorNotify
 
@@ -50,6 +49,13 @@ def timeString(ts):
         xdt = dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
         xstr = f"{xdt.hour:>2}:{xdt.minute:0>2}"
         return xstr
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def dateTimeString(ts):
+    try:
+        return time.strftime("%c", ts)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
