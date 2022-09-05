@@ -8,6 +8,16 @@
       <li><a href="/channels/1">Channels</a>
   </ul>
 </nav>
+{% if lenurecs > 0 %}
+    <section class="upcoming">
+        <div class="upcomingrecordings">
+            <p>There are {{ lenurecs }} upcoming recordings</p>
+            <p>Next: {{ upcoming[0]["program"]["title"] }} on
+            {{ upcoming[0]["channel"]["name"] }}
+            </p>
+        </div>
+    </section>
+{% endif %}
 <section class="content">
   <header>
     {% block header %}{% endblock %}
