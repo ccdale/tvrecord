@@ -625,6 +625,7 @@ def getScheduleRecord(eng):
                     Schedule.md5 == schedmd5,
                     (Schedule.airdate + Schedule.duration) > now,
                 )
+                .order_by(airdate)
                 .all()
             )
             for sched in scheds:
