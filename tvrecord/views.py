@@ -31,6 +31,7 @@ from tvrecord.tvrecorddb.wrangler import (
     whatsOnNow,
     scheduleFromMD5,
     setScheduleRecord,
+    getScheduleRecord,
 )
 
 
@@ -39,6 +40,7 @@ def index():
     try:
         headings = ["Channel", "Start", "Duration", "Title", "Description", "Record"]
         lines = []
+        upcoming = getScheduleRecord(eng)
         wons = whatsOnNow(eng)
         for won in wons:
             chanlink = f"channel/{won['dchan']['stationid']}"
@@ -59,6 +61,8 @@ def index():
             "lines": lines,
             "recordurl": url_for("recordProgram"),
             "lenheadings": len(headings),
+            "upcoming": upcoming,
+            "lenurecs": len(upcoming),
         }
         return render_template("index.html", **kwargs)
     except Exception as e:
@@ -106,6 +110,7 @@ def recordChannelProgram():
 @app.route("/channel/<chanid>")
 def channel(chanid):
     try:
+        upcoming = getScheduleRecord(eng)
         print(f"in channel: chanid is {chanid}")
         # op = channelProgsTable(eng, chanid)
         headings = ["Start", "Duration", "Title", "Description"]
@@ -133,6 +138,8 @@ def channel(chanid):
             "cname": cname,
             "recordurl": url_for("recordChannelProgram"),
             "chanid": chanid,
+            "upcoming": upcoming,
+            "lenurecs": len(upcoming),
         }
         return render_template("channel.html", **kwargs)
     except Exception as e:
@@ -142,9 +149,16 @@ def channel(chanid):
 @app.route("/channels/<fav>")
 def channels(fav):
     try:
+        upcoming = getScheduleRecord(eng)
         favs = True if fav == "1" else False
         chans = favourites(eng, favs=favs)
-        return render_template("channels.html", chans=chans, fav=fav)
+        kwargs = {
+            "chans": chans,
+            "fav": fav,
+            "upcoming": upcoming,
+            "lenurecs": len(upcoming),
+        }
+        return render_template("channels.html", **kwargs)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
