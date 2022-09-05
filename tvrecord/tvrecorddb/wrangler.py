@@ -623,6 +623,7 @@ def getScheduleRecord(eng):
                 session.query(Schedule)
                 .filter(
                     (Schedule.airdate + Schedule.duration) > now,
+                    Schedule.record == 1,
                 )
                 .order_by(Schedule.airdate)
                 .all()
