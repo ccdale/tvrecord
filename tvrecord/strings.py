@@ -18,7 +18,8 @@
 #
 from datetime import datetime, timezone
 import sys
-import time
+
+# import time
 
 from ccaerrors import errorNotify
 
@@ -55,7 +56,8 @@ def timeString(ts):
 
 def dateTimeString(ts):
     try:
-        return time.strftime("%c", ts)
+        dt = datetime.fromtimestamp(ts)
+        return dt.strftime("%c")
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 

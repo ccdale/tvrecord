@@ -17,7 +17,7 @@
 #     along with tvrecord.  If not, see <http://www.gnu.org/licenses/>.
 """views module for tvrecord."""
 import sys
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, unquote_plus
 
 from ccaerrors import errorNotify
 from flask import flash, redirect, render_template, request, url_for
@@ -166,7 +166,8 @@ def channels(fav):
 @app.route("/program/<schedulemd5>")
 def program(schedulemd5):
     try:
-        pinfo = scheduleFromMD5(eng, schedulemd5)
+        schedmd5 = unquote_plus(schedulemd5)
+        pinfo = scheduleFromMD5(eng, schedmd5)
         return render_template("program.html", **pinfo)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
