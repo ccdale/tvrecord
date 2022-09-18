@@ -506,8 +506,11 @@ def progDetailsFromSchedule(session, schedule, withchan=True):
     try:
         # there should only be one program
         prog = session.query(Program).filter_by(programid=schedule.programid).first()
+        # print(f"progDetailsFromSchedule: {prog=}")
         dprog = prog._todict_()
+        # print(f"progDetailsFromSchedule: {dprog=}")
         dchan = chanDetails(session, schedule.stationid) if withchan else None
+        # print(f"progDetailsFromSchedule: {dchan=}")
         return (dchan, dprog)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
@@ -564,10 +567,14 @@ def scheduleFromMD5(eng, schedulemd5):
 def programFromScheduleMD5(session, smd5):
     try:
         sched = session.query(Schedule).filter_by(md5=smd5).first()
+        # print(f"programFromScheduleMD5: {sched=}")
         dchan, dprog = progDetailsFromSchedule(session, sched)
+        # print(f"programFromScheduleMD5: {dchan=}, {dprog=}")
         dsched = sched._todict_()
+        # print(f"programFromScheduleMD5: {dsched=}")
         peeps = personFromProgId(session, dprog["programid"])
         pid = programInfoDict(dsched=dsched, dchan=dchan, dprog=dprog, peeps=peeps)
+        # print(f"programFromScheduleMD5: {pid=}")
         return pid
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
@@ -578,6 +585,7 @@ def personFromProgId(session, progid):
         xdats = []
         xdat = None
         peeps = session.query(Personmap).filter_by(programid=progid).all()
+        # print(f"personFromProgId: {peeps=}")
         for peep in peeps:
             pdat = session.query(Person).filter_by(personid=peep.personid).first()
             xdat = {
@@ -585,6 +593,7 @@ def personFromProgId(session, progid):
                 "role": peep.role,
                 "billingorder": peep.billingorder,
             }
+            # print(f"personFromProgId: {xdat=}")
             xdats.append(xdat)
         return xdats
     except Exception as e:

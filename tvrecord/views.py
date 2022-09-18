@@ -17,14 +17,14 @@
 #     along with tvrecord.  If not, see <http://www.gnu.org/licenses/>.
 """views module for tvrecord."""
 import sys
-from urllib.parse import quote_plus, unquote_plus
+from urllib.parse import quote, quote_plus, unquote, unquote_plus
 
 from ccaerrors import errorNotify
 from flask import flash, redirect, render_template, request, url_for
 
 from tvrecord import app, cf, eng
 from tvrecord.html import mkCellDict
-from tvrecord.strings import durationString, timeString
+from tvrecord.strings import durationString, dateTimeString, timeString
 from tvrecord.tvrecorddb.wrangler import (
     chanProgs,
     favourites,
@@ -120,7 +120,9 @@ def channel(chanid):
         for prg in cprgs:
             line = [mkCellDict(timeString(prg["airdate"]), "time")]
             line.append(mkCellDict(durationString(prg["duration"]), "time"))
-            link = f"/program/{quote_plus(prg['md5'])}"
+            # link = url_for("program", schedulemd5=quote(prg["md5"]))
+            link = url_for("program", schedulemd5=prg["md5"])
+            # link = f"/program/{quote(prg['md5'])}"
             line.append(mkCellDict(prg["dprog"]["title"], "title", link=link))
             desc = (
                 prg["dprog"]["shortdesc"]
@@ -163,11 +165,20 @@ def channels(fav):
         errorNotify(sys.exc_info()[2], e)
 
 
-@app.route("/program/<schedulemd5>")
-def program(schedulemd5):
+# @app.route("/program/<schedulemd5>")
+@app.route("/program")
+# def program(schedulemd5):
+def program():
     try:
-        schedmd5 = unquote_plus(schedulemd5)
+        # schedmd5 = unquote(schedulemd5)
+        # schedmd5 = schedulemd5
+        schedmd5 = request.args.get("schedulemd5")
+        print(f"{schedmd5=}")
         pinfo = scheduleFromMD5(eng, schedmd5)
+        pinfo["durationstring"] = durationString(pinfo["schedule"]["duration"])
+        pinfo["datetimestring"] = dateTimeString(pinfo["schedule"]["airdate"])
+        pinfo["timestring"] = timeString(pinfo["schedule"]["airdate"])
+        pinfo["lenurecs"] = 0
         return render_template("program.html", **pinfo)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

@@ -1,12 +1,21 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h1>{% block title %}{{ dprog["title"] }}{% endblock %}</h1>
+    <h1>{% block title %}{{ program["title"] }}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-<p>{{ schedule }}</p>
-<p>{{ channel }}</p>
-<p>{{ program }}</p>
-<p>{{ people }}</p>
+<p class="progtime">{{ channel["name"] }} - {{ datetimestring }} - {{ durationstring }}</p>
+<p class="progshort">{{ program["shortdesc"] }}</p>
+<p class="proglong">{{ program["longdesc"] }}</p>
+<div class="castlist">
+    <table class="casttable">
+        {% for peep in people %}
+            <tr class="castrow">
+                <td class="castrole">{{ peep["role"] }}</td>
+                <td class="castname">{{ peep["name"] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}
