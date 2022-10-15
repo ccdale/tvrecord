@@ -28,7 +28,7 @@ def stopAll():
         errorNotify(sys.exc_info()[2], e)
 
 
-def findFreeAdapter(mux):
+def findFreeAdapter(mux, channel):
     try:
         pass
     except Exception as e:
@@ -40,7 +40,8 @@ def muxForChannel(channel):
     try:
         dvbc = DVBCommand()
         dvbc.open()
-        errmsg, lines = dvbc.doCommand("serviceinfo '{channel}'")
+        lines = dvbc.serviceinfo(channel)
         dvbc.close()
+        return lines[0]
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

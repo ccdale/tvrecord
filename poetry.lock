@@ -34,7 +34,7 @@ python-versions = ">=3.10,<4.0"
 
 [[package]]
 name = "ccalogging"
-version = "0.4.3"
+version = "0.4.4"
 description = "python module for easy logging"
 category = "main"
 optional = false
@@ -72,7 +72,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "cryptography"
-version = "38.0.1"
+version = "38.0.2"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
 category = "main"
 optional = false
@@ -91,7 +91,7 @@ test = ["pytest (>=6.2.0)", "pytest-benchmark", "pytest-cov", "pytest-subtests",
 
 [[package]]
 name = "dvbctrl"
-version = "0.2.8"
+version = "0.3.0"
 description = "Controls a local dvbstreamer"
 category = "main"
 optional = false
@@ -149,7 +149,7 @@ email = ["email-validator"]
 
 [[package]]
 name = "greenlet"
-version = "1.1.3"
+version = "1.1.3.post0"
 description = "Lightweight in-process concurrent programming"
 category = "main"
 optional = false
@@ -465,7 +465,7 @@ email = ["email-validator"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "5a211306b1912a907696e78dd1e4fcae16f8019826a3118b5957047a0ebaed26"
+content-hash = "c9f8cfc12ec535a7af8c76449085c863d259796c2c919fc70c5bab51388f330a"
 
 [metadata.files]
 attrs = []
