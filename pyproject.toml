@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tvrecord"
-version = "0.1.9"
+version = "0.1.10"
 description = "A set of modules to record TV from a TV Card."
 authors = ["ccdale <chris.charles.allison+tvrecord@gmail.com>"]
 readme = "README.md"
