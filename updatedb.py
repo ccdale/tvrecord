@@ -23,7 +23,7 @@ import sys
 from ccaerrors import errorNotify, errorExit
 import ccalogging
 
-from tvrecord import __version__, __appname__
+from tvrecord import __version__, appname
 from tvrecord.credential import getSDCreds
 from tvrecord.config import Configuration
 from tvrecord.tvrecorddb.db import makeDBEngine
@@ -33,7 +33,7 @@ from tvrecord.tvrecordsd.sdapi import SDApi
 home = os.path.expanduser("~/")
 logd = os.path.join(home, "log")
 res = os.makedirs(logd, exist_ok=True)
-logfn = os.path.join(logd, f"{__appname__}.log")
+logfn = os.path.join(logd, f"{appname}.log")
 ccalogging.setLogFile(logfn, rotation=30)
 ccalogging.setInfo()
 log = ccalogging.log
@@ -87,7 +87,7 @@ def close(cf, sd):
 def updatedb():
     try:
         debug = False
-        cf, sd, mysqleng = begin(__appname__, debug=debug)
+        cf, sd, mysqleng = begin(appname, debug=debug)
         linupRefresh(sd, cf, mysqleng)
         schedules(sd, mysqleng)
         close(cf, sd)
