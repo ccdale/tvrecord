@@ -24,7 +24,8 @@ from flask import Flask
 
 from tvrecord.config import Configuration
 from tvrecord.tvrecorddb.db import makeDBEngine
-from tvrecord.tvrecorddb.models import Base
+
+# from tvrecord.tvrecorddb.models import Base
 
 
 def begin(debug=False):

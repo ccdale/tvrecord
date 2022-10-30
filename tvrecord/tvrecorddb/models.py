@@ -125,3 +125,25 @@ class Personmap(Base):
 
     def _todict_(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
+
+
+class Recording(Base):
+    __tablename__ = "recording"
+
+    rid = Column(Integer(), primary_key=True)
+    programid = Column(String(128))
+    start = Column(Integer())
+    duration = Column(Integer())
+    startpad = Column(Integer())
+    endpad = Column(Integer())
+    adapter = Column(Integer())
+    filename = Column(String(4096))
+
+    def __repr__(self):
+        op = f"""<Recording(rid={self.rid}, programid={self.programid},
+        start={self.start}, duration={self.duration}, startpad={self.startpad},
+        endpad={self.endpad}, adapter={self.adapter}, filename={self.filename})>"""
+        return op
+
+    def _todict_(self):
+        return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
