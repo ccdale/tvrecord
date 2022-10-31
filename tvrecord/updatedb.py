@@ -84,13 +84,14 @@ def close(cf, sd):
         errorNotify(sys.exc_info()[2], e)
 
 
-def updatedb():
+def updatedb(debug=False):
     try:
-        debug = False
+        log.info(f"{appname} {__version__} database updater starting.")
         cf, sd, mysqleng = begin(appname, debug=debug)
         linupRefresh(sd, cf, mysqleng)
         schedules(sd, mysqleng)
         close(cf, sd)
+        log.info(f"{appname} database updater completed.")
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 

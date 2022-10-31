@@ -11,7 +11,6 @@ import tvrecord.tvrecorder as recorder
 
 log = recorder.log
 doexit = Event()
-sleeptime = 60
 
 
 def interruptMonitor(signrcvd, frame):
@@ -29,7 +28,7 @@ signal(SIGTERM, interruptMonitor)
 signal(SIGHUP, interruptMonitor)
 
 
-def doTasks():
+def doTasks(cf, eng):
     """iterate through the tasks"""
     try:
         pass
@@ -39,34 +38,28 @@ def doTasks():
 
 def shutDown():
     try:
-        pass
+        cf.writeConfig()
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
 
-def startUp():
-    try:
-        pass
-    except Exception as e:
-        errorNotify(sys.exc_info()[2], e)
-
-
-def monitor():
+def monitor(debug=False):
     """wake up, kick off any task, sleep, repeat"""
     try:
         log.info(f"DVB Monitor version {tvrecord.__version__} starting")
-        startUp()
+        cf, eng = tvrecord.begin(debug=debug)
+        sleeptime = int(cf.get("sleeptime", "60"))
         log.debug("while loop starting, hello.")
         while not doexit.is_set():
-            doTasks()
+            doTasks(cf, eng)
             log.debug(f"Waiting for {sleeptime} seconds")
             doexit.wait(sleeptime)
         log.debug("while loop exiting, bye")
         log.info("Shutting down DVB Monitor")
-        shutDown()
+        shutDown(cf)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
 
 if __name__ == "__main__":
-    monitor()
+    monitor(debug=True)
