@@ -33,6 +33,7 @@ from tvrecord.tvrecorddb.models import (
     Person,
     Personmap,
     Program,
+    Recording,
 )
 
 log = ccalogging.log

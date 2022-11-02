@@ -97,4 +97,4 @@ def updatedb(debug=False):
 
 
 if __name__ == "__main__":
-    updatedb()
+    updatedb(debug=True)

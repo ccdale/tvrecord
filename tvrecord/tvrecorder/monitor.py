@@ -39,6 +39,7 @@ def doTasks(cf, eng):
 def shutDown():
     try:
         cf.writeConfig()
+        recorder.stopAll()
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -47,6 +48,9 @@ def monitor(debug=False):
     """wake up, kick off any task, sleep, repeat"""
     try:
         log.info(f"DVB Monitor version {tvrecord.__version__} starting")
+        if len(recorder.streamers) == 0:
+            raise Exception("No DVBStreamers found")
+        recorder.startAll()
         cf, eng = tvrecord.begin(debug=debug)
         sleeptime = int(cf.get("sleeptime", "60"))
         log.debug("while loop starting, hello.")

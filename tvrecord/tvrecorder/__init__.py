@@ -25,19 +25,14 @@ streamers = [DVBStreamer(x) for x in adapters]
 
 def startAll():
     try:
-        for streamer in streamers:
-            if not streamer.isRunning():
-                log.debug(f"starting dvbstreamer on adapter {streamer.adapter}")
-                streamer.start()
+        [s.start() for s in streamers if not s.isRunning()]
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
 
 def stopAll():
     try:
-        for streamer in streamers:
-            log.debug(f"stopping dvbstreamer on adapter {streamer.adapter}")
-            streamer.stop()
+        [s.stop() for s in streamers if s.isRunning()]
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
