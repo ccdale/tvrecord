@@ -1,3 +1,4 @@
+import datetime
 import os
 from signal import signal, SIGINT, SIGTERM, SIGHUP
 import sys
@@ -148,8 +149,18 @@ def makeFileName(nextrecording):
             txt = f"{txt}-{s}{e}"
         title = slugify(txt)
         # add date and time to beginning
-        # .ts to end
+        # add .ts to end
 
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def makeTs(dt=None):
+    try:
+        if dt is None:
+            dt = datetime.datetime.today()
+        ts = f"{dt.year}{dt.month}{dt.day}{dt.hour}{dt.minute}00"
+        return ts
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
