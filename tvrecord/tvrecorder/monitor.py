@@ -13,7 +13,7 @@ from dvbctrl.recorder import Recorder
 from slugify import slugify
 
 import tvrecord
-from tvrecord.tvrecorddb.wrangler import getScheduleRecord
+from tvrecord.tvrecorddb.wrangler import getScheduleRecord, unsetScheduleRecord
 
 __appname__ = "tvrecord"
 home = os.path.expanduser("~/")
@@ -123,16 +123,25 @@ def nextStart(upcoming, startpad, endpad):
         errorNotify(sys.exc_info()[2], e)
 
 
-def startRecording(nextrecording):
+def startRecording(eng, nextrecording):
     try:
+        fnstub = makeFileNameStub(nextrecording)
+        if not unsetScheduleRecord(eng, nextrecording["schedule"]):
+            raise Exception(
+                f"Failed to unset record flag in schedule: {nextrecording=}"
+            )
         adapter = findFreeAdapter()
-        if adapter is not None:
-            pass
+        if adapter is None:
+            raise Exception(
+                f"failed to find a free adapter for recording: {nextrecording=}"
+            )
+        # TODO save the data to the record table
+        # TODO start the recording
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
 
-def makeFileName(nextrecording):
+def makeFileNameStub(nextrecording):
     try:
         program = nextrecording["program"]
         txt = program["title"]
@@ -148,9 +157,8 @@ def makeFileName(nextrecording):
                 e = ""
             txt = f"{txt}-{s}{e}"
         title = slugify(txt)
-        # add date and time to beginning
-        # add .ts to end
-
+        ts = makeTs()
+        return f"{ts}-{title}"
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -168,11 +176,12 @@ def makeTs(dt=None):
 def doTasks(cf, eng):
     """iterate through the tasks"""
     try:
+        rdir = cf.get("recordingsdir")
         upcoming = getScheduleRecord(eng)
         if len(upcoming):
             ns = nextStart(upcoming, cf.get("startpad"), cf.get("endpad"))
             if ns is not None:
-                pass  # start recording
+                startRecording(eng, ns)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 

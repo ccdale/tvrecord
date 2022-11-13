@@ -625,6 +625,27 @@ def setScheduleRecord(eng, schedmd5):
         errorNotify(sys.exc_info()[2], e)
 
 
+def unsetScheduleRecord(eng, sched):
+    try:
+        with Session(eng) as session, session.begin():
+            sched = (
+                session.query(Schedule)
+                .filter(
+                    Schedule.md5 == sched["md5"],
+                    Schedule.airdate == sched["airdate"],
+                    Schedule.record == 1,
+                )
+                .first()
+            )
+            if sched is not None:
+                sched.record = 0
+                session.add(sched)
+                return True
+        return False
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
 def getScheduleRecord(eng):
     try:
         now = int(time.time())
