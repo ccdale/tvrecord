@@ -704,3 +704,22 @@ def addRecording(cfg, eng, nextrec, fqfn, adapter):
         return rec.rid
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
+
+
+def getLastSize(eng, rid):
+    try:
+        with Session(eng) as session, session.begin():
+            rec = session.query(Recording).filter(Recording.rid == rid).first()
+        return rec.size
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
+
+
+def updateSize(eng, rid, size):
+    try:
+        with Session(eng) as session, session.begin():
+            rec = session.query(Recording).filter(Recording.rid == rid).first()
+            rec.size = size
+            session.commit()
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)
