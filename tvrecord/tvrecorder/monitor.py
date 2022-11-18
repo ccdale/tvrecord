@@ -183,15 +183,17 @@ def makeTs(dt=None):
         errorNotify(sys.exc_info()[2], e)
 
 
-def doTasks(cf, eng):
+def doTasks(cf, eng, recs):
     """iterate through the tasks"""
     try:
+        r = None
         rdir = cf.get("recordingsdir")
         upcoming = getScheduleRecord(eng)
         if len(upcoming):
             ns = nextStart(upcoming, cf.get("startpad"), cf.get("endpad"))
             if ns is not None:
-                startRecording(cf, eng, ns)
+                r = startRecording(cf, eng, ns)
+        return r
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -208,9 +210,12 @@ def monitor(debug=False):
         log.debug(f"{mfc=}")
         cf, eng = tvrecord.begin(debug=debug)
         sleeptime = int(cf.get("sleeptime", "60"))
+        recs = []
         log.debug("while loop starting, hello.")
         while not doexit.is_set():
-            doTasks(cf, eng)
+            r = doTasks(cf, eng, recs)
+            if r is not None:
+                recs.append(r)
             # log.debug(f"Waiting for {sleeptime} seconds")
             doexit.wait(sleeptime)
         log.debug("while loop exiting, bye")
