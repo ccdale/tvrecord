@@ -142,8 +142,11 @@ def startRecording(cf, eng, nextrecording):
         fqfn = os.path.join([cf.get("recordingsdir"), f"{fnstub}.ts"])
         nfofn = os.path.join([cf.get("recordingsdir"), f"{fnstub}.nfo"])
         addRecording(cf, eng, nextrecording, fqfn, adapter)
-        # TODO start the recording
         # TODO make nfo file
+        chan = nextrecording["channel"]["dvbname"]
+        r = Recorder(chan, fqfn, adapter=adapter)
+        r.start()
+        return r
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
