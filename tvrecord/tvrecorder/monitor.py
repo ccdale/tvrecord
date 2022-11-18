@@ -13,7 +13,11 @@ from dvbctrl.recorder import Recorder
 from slugify import slugify
 
 import tvrecord
-from tvrecord.tvrecorddb.wrangler import getScheduleRecord, unsetScheduleRecord
+from tvrecord.tvrecorddb.wrangler import (
+    addRecording,
+    getScheduleRecord,
+    unsetScheduleRecord,
+)
 
 __appname__ = "tvrecord"
 home = os.path.expanduser("~/")
@@ -123,7 +127,7 @@ def nextStart(upcoming, startpad, endpad):
         errorNotify(sys.exc_info()[2], e)
 
 
-def startRecording(eng, nextrecording):
+def startRecording(cf, eng, nextrecording):
     try:
         fnstub = makeFileNameStub(nextrecording)
         if not unsetScheduleRecord(eng, nextrecording["schedule"]):
@@ -135,8 +139,11 @@ def startRecording(eng, nextrecording):
             raise Exception(
                 f"failed to find a free adapter for recording: {nextrecording=}"
             )
-        # TODO save the data to the record table
+        fqfn = os.path.join([cf.get("recordingsdir"), f"{fnstub}.ts"])
+        nfofn = os.path.join([cf.get("recordingsdir"), f"{fnstub}.nfo"])
+        addRecording(cf, eng, nextrecording, fqfn, adapter)
         # TODO start the recording
+        # TODO make nfo file
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -181,7 +188,7 @@ def doTasks(cf, eng):
         if len(upcoming):
             ns = nextStart(upcoming, cf.get("startpad"), cf.get("endpad"))
             if ns is not None:
-                startRecording(eng, ns)
+                startRecording(cf, eng, ns)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
