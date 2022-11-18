@@ -23,7 +23,8 @@ def test_makeTs():
 
 
 def test_makeTs_defined_input():
-    dt = datetime.datetime.now()
-    nstr = f"{dt.year}{dt.month}{dt.day}{dt.hour}{dt.minute}00"
+    args = [2019, 2, 14, 21, 4, 28]
+    dt = datetime.datetime(*args)
+    nstr = "".join([f"{x:02}" for x in args])
     ts = makeTs(dt)
     assert ts == nstr

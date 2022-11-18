@@ -680,3 +680,23 @@ def programInfoDict(dsched=None, dchan=None, dprog=None, peeps=None):
         return xd
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
+
+
+def addRecording(cfg, eng, nextrec, fqfn, adapter):
+    try:
+        sched = nextrec["schedule"]
+        prog = nextrec["program"]
+        recd = {
+            "programid": sched["programid"],
+            "start": sched["airdate"],
+            "duration": sched["duration"],
+            "startpad": cfg.get("startpad"),
+            "endpad": cfg.get("endpad"),
+            "adaptor": adaptor,
+            "filename": fqfn,
+        }
+        rec = Recording(**recd)
+        with Session(eng) as session, session.begin():
+            session.add(rec)
+    except Exception as e:
+        errorNotify(sys.exc_info()[2], e)

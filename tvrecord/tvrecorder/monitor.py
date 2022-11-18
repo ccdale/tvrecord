@@ -167,7 +167,7 @@ def makeTs(dt=None):
     try:
         if dt is None:
             dt = datetime.datetime.today()
-        ts = f"{dt.year}{dt.month}{dt.day}{dt.hour}{dt.minute}00"
+        ts = f"{dt:%Y%m%d%H%M%S}"
         return ts
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
