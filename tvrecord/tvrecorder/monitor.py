@@ -141,12 +141,12 @@ def startRecording(cf, eng, nextrecording):
             )
         fqfn = os.path.join([cf.get("recordingsdir"), f"{fnstub}.ts"])
         nfofn = os.path.join([cf.get("recordingsdir"), f"{fnstub}.nfo"])
-        addRecording(cf, eng, nextrecording, fqfn, adapter)
+        rid = addRecording(cf, eng, nextrecording, fqfn, adapter)
         # TODO make nfo file
         chan = nextrecording["channel"]["dvbname"]
         r = Recorder(chan, fqfn, adapter=adapter)
         r.start()
-        return r
+        return (r, rid)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -192,8 +192,8 @@ def doTasks(cf, eng, recs):
         if len(upcoming):
             ns = nextStart(upcoming, cf.get("startpad"), cf.get("endpad"))
             if ns is not None:
-                r = startRecording(cf, eng, ns)
-        return r
+                r, rid = startRecording(cf, eng, ns)
+        return (r, rid)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -213,9 +213,9 @@ def monitor(debug=False):
         recs = []
         log.debug("while loop starting, hello.")
         while not doexit.is_set():
-            r = doTasks(cf, eng, recs)
+            r, rid = doTasks(cf, eng, recs)
             if r is not None:
-                recs.append(r)
+                recs.append((r, rid))
             # log.debug(f"Waiting for {sleeptime} seconds")
             doexit.wait(sleeptime)
         log.debug("while loop exiting, bye")

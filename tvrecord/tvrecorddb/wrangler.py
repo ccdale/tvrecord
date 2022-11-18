@@ -698,5 +698,7 @@ def addRecording(cfg, eng, nextrec, fqfn, adapter):
         rec = Recording(**recd)
         with Session(eng) as session, session.begin():
             session.add(rec)
+            session.commit()
+        return rec.rid
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
