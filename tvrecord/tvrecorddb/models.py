@@ -138,6 +138,8 @@ class Recording(Base):
     endpad = Column(Integer())
     adapter = Column(Integer())
     filename = Column(String(4096))
+    size = Column(Integer())
+    channel = Column(String(128))
 
     def __repr__(self):
         op = f"""<Recording(rid={self.rid}, programid={self.programid},
