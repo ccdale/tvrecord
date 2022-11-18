@@ -694,6 +694,8 @@ def addRecording(cfg, eng, nextrec, fqfn, adapter):
             "endpad": cfg.get("endpad"),
             "adaptor": adaptor,
             "filename": fqfn,
+            "size": 0,
+            "channel": nextrec["channel"]["name"],
         }
         rec = Recording(**recd)
         with Session(eng) as session, session.begin():
