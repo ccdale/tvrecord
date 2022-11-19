@@ -20,6 +20,7 @@ from tvrecord.tvrecorddb.wrangler import (
     unsetScheduleRecord,
     updateSize,
 )
+from tvrecord.tvrecorder.monitorrecorder import MonitorRecorder
 
 __appname__ = "tvrecord"
 home = os.path.expanduser("~/")
@@ -145,10 +146,21 @@ def startRecording(cf, eng, nextrecording):
         nfofn = os.path.join([cf.get("recordingsdir"), f"{fnstub}.nfo"])
         rid = addRecording(cf, eng, nextrecording, fqfn, adapter)
         # TODO make nfo file
-        chan = nextrecording["channel"]["dvbname"]
-        r = Recorder(chan, fqfn, adapter=adapter)
-        r.start()
-        return (r, rid)
+        kwargs = {
+            "adapter": adapter,
+            "starttime": nextrecording["schedule"]["airdate"]
+            - int(cfg.get("startpad")),
+            "endtime": nextrecording["schedule"]["airdate"]
+            + nextrecording["schedule"]["duration"]
+            + int(cfg.get("endpad")),
+        }
+        args = [nextrecording["channel"]["dvbname"], fqfn]
+        m = MonitorRecorder(*args, **kwargs)
+        # Ochan = nextrecording["channel"]["dvbname"]
+        # r = Recorder(chan, fqfn, adapter=adapter)
+        # r.start()
+        # m = MonitorRecorder(chan, fqfn, adapter=adapter
+        return (m, rid)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
