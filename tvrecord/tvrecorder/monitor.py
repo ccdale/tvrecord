@@ -15,8 +15,10 @@ from slugify import slugify
 import tvrecord
 from tvrecord.tvrecorddb.wrangler import (
     addRecording,
+    getLastSize,
     getScheduleRecord,
     unsetScheduleRecord,
+    updateSize,
 )
 
 __appname__ = "tvrecord"
@@ -187,6 +189,7 @@ def doTasks(cf, eng, recs):
     """iterate through the tasks"""
     try:
         r = None
+        rid = None
         rdir = cf.get("recordingsdir")
         upcoming = getScheduleRecord(eng)
         if len(upcoming):
@@ -216,7 +219,6 @@ def monitor(debug=False):
             r, rid = doTasks(cf, eng, recs)
             if r is not None:
                 recs.append((r, rid))
-            # log.debug(f"Waiting for {sleeptime} seconds")
             doexit.wait(sleeptime)
         log.debug("while loop exiting, bye")
         log.info("Shutting down DVB Monitor")
