@@ -200,15 +200,27 @@ def makeTs(dt=None):
 def doTasks(cf, eng, recs):
     """iterate through the tasks"""
     try:
-        r = None
+        now = time.time()
+        for r, rid in recs:
+            growing, size = r.check(r.lastsize)
+            if not growing:
+                log.warning(f"recording has stopped growing: {r}")
+            else:
+                r.lastsize = size
+            if r.endtime >= now:
+                r.stop()
+                r.completed = True
+                growing, size = r.check(0)
+                updateSize(eng, rid, size)
+        m = None
         rid = None
         rdir = cf.get("recordingsdir")
         upcoming = getScheduleRecord(eng)
         if len(upcoming):
             ns = nextStart(upcoming, cf.get("startpad"), cf.get("endpad"))
             if ns is not None:
-                r, rid = startRecording(cf, eng, ns)
-        return (r, rid)
+                m, rid = startRecording(cf, eng, ns)
+        return (m, rid)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
@@ -228,9 +240,15 @@ def monitor(debug=False):
         recs = []
         log.debug("while loop starting, hello.")
         while not doexit.is_set():
-            r, rid = doTasks(cf, eng, recs)
-            if r is not None:
-                recs.append((r, rid))
+            m, rid = doTasks(cf, eng, recs)
+            if m is not None:
+                recs.append((m, rid))
+            remove = []
+            for m, rid in recs:
+                if m.completed:
+                    remove.append((m, rid))
+            for m, rid in remove:
+                recs.remove((m, rid))
             doexit.wait(sleeptime)
         log.debug("while loop exiting, bye")
         log.info("Shutting down DVB Monitor")

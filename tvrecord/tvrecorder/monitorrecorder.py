@@ -10,6 +10,7 @@ class MonitorRecorder(Recorder):
             self.starttime = starttime
             self.endtime = endtime
             self.lastsize = 0
+            self.completed = False
         except Exception as e:
             errorNotify(sys.exc_info()[2], e)
 
