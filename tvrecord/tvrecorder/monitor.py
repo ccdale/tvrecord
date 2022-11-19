@@ -121,7 +121,7 @@ def muxForChannel(channel):
 def nextStart(upcoming, startpad, endpad):
     try:
         now = time.time()
-        nextstart = upcoming[0]["schedule"]["airdate"] - cf.get("startpad")
+        nextstart = upcoming[0]["schedule"]["airdate"] - startpad
         if nextstart <= now:
             return upcoming[0]
         else:
