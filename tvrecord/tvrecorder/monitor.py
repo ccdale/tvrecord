@@ -145,7 +145,7 @@ def startRecording(cf, eng, nextrecording):
         fqfn = os.path.join(cf.get("recordingsdir"), f"{fnstub}.ts")
         nfofn = os.path.join(cf.get("recordingsdir"), f"{fnstub}.nfo")
         rid = addRecording(cf, eng, nextrecording, fqfn, adapter)
-        starttime = int(time.time())
+        starttime = nextrecording["schedule"]["airdate"] - cf.get("startpad")
         endtime = (
             nextrecording["schedule"]["airdate"]
             + nextrecording["schedule"]["duration"]
@@ -216,6 +216,7 @@ def doTasks(cf, eng, recs):
             else:
                 r.lastsize = size
             if r.endtime >= now:
+                log.info(f"stopping recording of file {r.fqfn}, size: {size}")
                 r.stop()
                 r.completed = True
                 growing, size = r.check(0)
@@ -256,6 +257,7 @@ def monitor(debug=False):
                 if m.completed:
                     remove.append((m, rid))
             for m, rid in remove:
+                log.debug(f"{m} has completed. removing")
                 recs.remove((m, rid))
             doexit.wait(sleeptime)
         log.debug("while loop exiting, bye")
