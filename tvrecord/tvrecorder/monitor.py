@@ -162,7 +162,7 @@ def startRecording(cf, eng, nextrecording):
         args = [nextrecording["channel"]["dvbname"], fqfn]
         m = MonitorRecorder(*args, **kwargs)
         log.info(f"starting to record {title} on {channel}")
-        log.debug(f"{m}")
+        log.info(f"{m}")
         m.start()
         # Ochan = nextrecording["channel"]["dvbname"]
         # r = Recorder(chan, fqfn, adapter=adapter)
@@ -272,6 +272,6 @@ def monitor(debug=False):
 
 
 if __name__ == "__main__":
-    # ccalogging.setDebug()
-    monitor()
-    # monitor(debug=True)
+    ccalogging.setDebug()
+    # monitor()
+    monitor(debug=True)
