@@ -693,6 +693,7 @@ def programInfoDict(dsched=None, dchan=None, dprog=None, peeps=None):
 
 def addRecording(cfg, eng, nextrec, fqfn, adapter):
     try:
+        rid = 0
         sched = nextrec["schedule"]
         prog = nextrec["program"]
         recd = {
@@ -709,8 +710,9 @@ def addRecording(cfg, eng, nextrec, fqfn, adapter):
         rec = Recording(**recd)
         with Session(eng) as session, session.begin():
             session.add(rec)
+            rid = rec.rid
             session.commit()
-        return rec.rid
+        return rid
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)
 
