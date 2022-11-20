@@ -145,20 +145,29 @@ def startRecording(cf, eng, nextrecording):
         fqfn = os.path.join(cf.get("recordingsdir"), f"{fnstub}.ts")
         nfofn = os.path.join(cf.get("recordingsdir"), f"{fnstub}.nfo")
         rid = addRecording(cf, eng, nextrecording, fqfn, adapter)
-        # TODO make nfo file
+        starttime = int(time.time())
+        endtime = (
+            nextrecording["schedule"]["airdate"]
+            + nextrecording["schedule"]["duration"]
+            + int(cf.get("endpad"))
+        )
         kwargs = {
             "adapter": adapter,
-            "starttime": nextrecording["schedule"]["airdate"] - int(cf.get("startpad")),
-            "endtime": nextrecording["schedule"]["airdate"]
-            + nextrecording["schedule"]["duration"]
-            + int(cf.get("endpad")),
+            "starttime": starttime,
+            "endtime": endtime,
         }
+        title = nextrecording["program"]["title"]
+        channel = nextrecording["channel"]["dvbname"]
         args = [nextrecording["channel"]["dvbname"], fqfn]
         m = MonitorRecorder(*args, **kwargs)
+        log.info(f"starting to record {title} on {channel}")
+        m.start()
         # Ochan = nextrecording["channel"]["dvbname"]
         # r = Recorder(chan, fqfn, adapter=adapter)
         # r.start()
         # m = MonitorRecorder(chan, fqfn, adapter=adapter
+
+        # TODO make nfo file
         return (m, rid)
     except Exception as e:
         errorNotify(sys.exc_info()[2], e)

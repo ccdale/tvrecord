@@ -18,7 +18,7 @@ class MonitorRecorder(Recorder):
     def __repr__(self):
         try:
             msg = f"<MonitorRecorder({self.channel}, {self.fqfn}"
-            msg = f"{msg}, adapter={self.adapter}, starttime={self.starttime}"
+            msg = f"{msg}, adapter={self.dvbc.adapter}, starttime={self.starttime}"
             msg = f"{msg}, endtime={self.endtime})>"
             return msg
         except Exception as e:
