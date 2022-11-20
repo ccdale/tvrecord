@@ -161,6 +161,7 @@ def startRecording(cf, eng, nextrecording):
         args = [nextrecording["channel"]["dvbname"], fqfn]
         m = MonitorRecorder(*args, **kwargs)
         log.info(f"starting to record {title} on {channel}")
+        log.debug(f"{m}")
         m.start()
         # Ochan = nextrecording["channel"]["dvbname"]
         # r = Recorder(chan, fqfn, adapter=adapter)
@@ -215,7 +216,7 @@ def doTasks(cf, eng, recs):
                 log.warning(f"recording has stopped growing: {r}")
             else:
                 r.lastsize = size
-            if r.endtime >= now:
+            if r.endtime < now:
                 log.info(f"stopping recording of file {r.fqfn}, size: {size}")
                 r.stop()
                 r.completed = True
