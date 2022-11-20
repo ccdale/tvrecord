@@ -148,11 +148,10 @@ def startRecording(cf, eng, nextrecording):
         # TODO make nfo file
         kwargs = {
             "adapter": adapter,
-            "starttime": nextrecording["schedule"]["airdate"]
-            - int(cfg.get("startpad")),
+            "starttime": nextrecording["schedule"]["airdate"] - int(cf.get("startpad")),
             "endtime": nextrecording["schedule"]["airdate"]
             + nextrecording["schedule"]["duration"]
-            + int(cfg.get("endpad")),
+            + int(cf.get("endpad")),
         }
         args = [nextrecording["channel"]["dvbname"], fqfn]
         m = MonitorRecorder(*args, **kwargs)
