@@ -41,6 +41,18 @@ optional = false
 python-versions = ">=3"
 
 [[package]]
+name = "ccautils"
+version = "0.4.2"
+description = "A set of useful utilities for python programs"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+python-dateutil = ">=2.8.1,<3.0.0"
+toml = ">=0.10.0,<0.11.0"
+
+[[package]]
 name = "certifi"
 version = "2022.9.24"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -415,6 +427,17 @@ tomli = {version = ">=1.0.0", markers = "python_version < \"3.11\""}
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
 
 [[package]]
+name = "python-dateutil"
+version = "2.8.2"
+description = "Extensions to the standard Python datetime module"
+category = "main"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
+
+[package.dependencies]
+six = ">=1.5"
+
+[[package]]
 name = "python-slugify"
 version = "6.1.2"
 description = "A Python slugify application that also handles Unicode"
@@ -475,6 +498,14 @@ cryptography = ">=2.0"
 jeepney = ">=0.6"
 
 [[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
 name = "sqlalchemy"
 version = "1.4.44"
 description = "Database Abstraction Library"
@@ -513,6 +544,14 @@ description = "The most basic Text::Unidecode port"
 category = "main"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "toml"
+version = "0.10.2"
+description = "Python Library for Tom's Obvious, Minimal Language"
+category = "main"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "tomli"
@@ -578,7 +617,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "f2039eacfe939c879535fc2fe9d1db520e96757555253808de9f0d5f8d77451a"
+content-hash = "6004b1478ee8d3d8528601e3f9e711438fbf57a486b6ba82a7884816158fedec"
 
 [metadata.files]
 attrs = []
@@ -588,6 +627,7 @@ ccaerrors = [
     {file = "ccaerrors-0.1.2.tar.gz", hash = "sha256:7e742ec09335dbb313116cc25c1f9f361e17262d9e079be4ec2757d76fb6b580"},
 ]
 ccalogging = []
+ccautils = []
 certifi = []
 cffi = []
 charset-normalizer = []
@@ -632,6 +672,7 @@ pyparsing = [
     {file = "pyparsing-3.0.9.tar.gz", hash = "sha256:2b020ecf7d21b687f219b71ecad3631f644a47f01403fa1d1036b0c6416d70fb"},
 ]
 pytest = []
+python-dateutil = []
 python-slugify = []
 pywin32-ctypes = []
 pyyaml = [
@@ -667,8 +708,13 @@ pyyaml = [
 ]
 requests = []
 secretstorage = []
+six = []
 sqlalchemy = []
 text-unidecode = []
+toml = [
+    {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
+    {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
+]
 tomli = []
 urllib3 = []
 werkzeug = []

@@ -7,6 +7,7 @@ import time
 
 from ccaerrors import errorNotify, errorRaise, errorExit
 import ccalogging
+from ccautils.fileutils import sizeof_fmt
 from dvbctrl.commands import DVBCommand
 from dvbctrl.dvbstreamer import DVBStreamer
 from dvbctrl.recorder import Recorder
@@ -217,7 +218,9 @@ def doTasks(cf, eng, recs):
             else:
                 r.lastsize = size
             if r.endtime < now:
-                log.info(f"stopping recording of file {r.fqfn}, size: {size}")
+                log.info(
+                    f"stopping recording of file {r.fqfn}, size: {sizeof_fmt(size)}"
+                )
                 r.stop()
                 r.completed = True
                 growing, size = r.check(0)
@@ -269,5 +272,6 @@ def monitor(debug=False):
 
 
 if __name__ == "__main__":
-    ccalogging.setDebug()
-    monitor(debug=True)
+    # ccalogging.setDebug()
+    monitor()
+    # monitor(debug=True)
