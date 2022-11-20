@@ -7,7 +7,7 @@ from dvbctrl.recorder import Recorder
 class MonitorRecorder(Recorder):
     def __init__(self, channel, fqfn, adapter=0, starttime=0, endtime=0):
         try:
-            super(channel, fqfn, adapter=adapter)
+            super().__init__(channel, fqfn, adapter=adapter)
             self.starttime = starttime
             self.endtime = endtime
             self.lastsize = 0
