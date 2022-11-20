@@ -142,8 +142,8 @@ def startRecording(cf, eng, nextrecording):
             raise Exception(
                 f"failed to find a free adapter for recording: {nextrecording=}"
             )
-        fqfn = os.path.join([cf.get("recordingsdir"), f"{fnstub}.ts"])
-        nfofn = os.path.join([cf.get("recordingsdir"), f"{fnstub}.nfo"])
+        fqfn = os.path.join(cf.get("recordingsdir"), f"{fnstub}.ts")
+        nfofn = os.path.join(cf.get("recordingsdir"), f"{fnstub}.nfo")
         rid = addRecording(cf, eng, nextrecording, fqfn, adapter)
         # TODO make nfo file
         kwargs = {
