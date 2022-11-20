@@ -565,9 +565,12 @@ def scheduleFromMD5(eng, schedulemd5):
         errorNotify(sys.exc_info()[2], e)
 
 
-def programFromScheduleMD5(session, smd5):
+def programFromScheduleMD5(session, smd5, start=None):
     try:
-        sched = session.query(Schedule).filter_by(md5=smd5).first()
+        if start is None:
+            sched = session.query(Schedule).filter_by(md5=smd5).first()
+        else:
+            sched = session.query(Schedule).filter_by(md5=smd5, airdate=start).first()
         # print(f"programFromScheduleMD5: {sched=}")
         dchan, dprog = progDetailsFromSchedule(session, sched)
         # print(f"programFromScheduleMD5: {dchan=}, {dprog=}")
@@ -632,8 +635,9 @@ def unsetScheduleRecord(eng, sched):
             log.debug(f"unsetScheduleRecord: {kwargs = }")
             xsched = session.query(Schedule).filter_by(**kwargs).first()
             log.debug(f"unsetScheduleRecord: {xsched = }")
-            xsched.record = 0
-            session.commit()
+            if xsched is not None:
+                xsched.record = 0
+                session.commit()
             return True
             # xsched = (
             #     session.query(Schedule)
@@ -670,7 +674,7 @@ def getScheduleRecord(eng):
                 .all()
             )
             for sched in scheds:
-                pid = programFromScheduleMD5(session, sched.md5)
+                pid = programFromScheduleMD5(session, sched.md5, sched.airdate)
                 recs.append(pid)
         return recs
     except Exception as e:
