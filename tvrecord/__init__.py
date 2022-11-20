@@ -38,7 +38,7 @@ def begin(debug=False):
         errorExit(sys.exc_info()[2], e)
 
 
-__version__ = "0.1.19"
+__version__ = "0.2.0"
 
 appname = "tvrecord"
 
