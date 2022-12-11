@@ -26,6 +26,7 @@ flake8 = "^4.0.1"
 
 [tool.poetry.scripts]
 updatetv = "tvrecord.updatedb:updatedb"
+monitortv = "tvrecord.tvrecorder.monitor:monitor"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
